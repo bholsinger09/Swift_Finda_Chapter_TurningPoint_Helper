@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var authManager: AuthenticationManager
+    @EnvironmentObject var chapterManager: ChapterManager
     @State private var showingEditProfile = false
     
     var body: some View {
@@ -52,6 +53,56 @@ struct ProfileView: View {
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(15)
+                    
+                    // Chapter Membership
+                    if let chapterId = authManager.currentUser?.chapterId,
+                       let chapter = chapterManager.chapters.first(where: { $0.id == chapterId }) {
+                        VStack(alignment: .leading, spacing: 15) {
+                            HStack {
+                                Image(systemName: "building.2.fill")
+                                    .foregroundColor(.blue)
+                                Text("Chapter Membership")
+                                    .font(.headline)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .foregroundColor(.green)
+                                    Text("Active Member")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                Divider()
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(chapter.displayName)
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                    
+                                    HStack {
+                                        Image(systemName: "location.fill")
+                                            .font(.caption)
+                                        Text("\(chapter.city), \(chapter.state)")
+                                            .font(.caption)
+                                    }
+                                    .foregroundColor(.secondary)
+                                    
+                                    HStack {
+                                        Image(systemName: "person.2.fill")
+                                            .font(.caption)
+                                        Text("\(chapter.memberCount) members")
+                                            .font(.caption)
+                                    }
+                                    .foregroundColor(.blue)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(15)
+                    }
                     
                     // Actions
                     VStack(spacing: 15) {
@@ -142,12 +193,14 @@ struct ProfileInfoRow: View {
 
 struct EditProfileView: View {
     @EnvironmentObject var authManager: AuthenticationManager
+    @EnvironmentObject var chapterManager: ChapterManager
     @Environment(\.presentationMode) var presentationMode
     
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var university = ""
     @State private var selectedState = "Alabama"
+    @State private var selectedChapterId: UUID?
     
     let usStates = [
         "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
@@ -161,6 +214,10 @@ struct EditProfileView: View {
         "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
         "West Virginia", "Wisconsin", "Wyoming"
     ]
+    
+    var availableChapters: [Chapter] {
+        chapterManager.chaptersInState(selectedState)
+    }
     
     var body: some View {
         NavigationView {
@@ -180,6 +237,49 @@ struct EditProfileView: View {
                 
                 Section(header: Text("Education")) {
                     TextField("University (Optional)", text: $university)
+                }
+                
+                Section(header: Text("Chapter Membership")) {
+                    if availableChapters.isEmpty {
+                        HStack {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.orange)
+                            Text("No chapters available in \(selectedState)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        Picker("Select Your Chapter", selection: $selectedChapterId) {
+                            Text("None").tag(nil as UUID?)
+                            ForEach(availableChapters) { chapter in
+                                Text(chapter.displayName).tag(chapter.id as UUID?)
+                            }
+                        }
+                        
+                        if let chapterId = selectedChapterId,
+                           let chapter = chapterManager.chapters.first(where: { $0.id == chapterId }) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "location.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.caption)
+                                    Text("\(chapter.city), \(chapter.state)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                HStack {
+                                    Image(systemName: "person.2.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.caption)
+                                    Text("\(chapter.memberCount) members")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.top, 4)
+                        }
+                    }
                 }
                 
                 Section {
@@ -208,6 +308,7 @@ struct EditProfileView: View {
                     lastName = user.lastName
                     selectedState = user.state
                     university = user.university ?? ""
+                    selectedChapterId = user.chapterId
                 }
             }
         }
@@ -220,6 +321,8 @@ struct EditProfileView: View {
         user.lastName = lastName
         user.state = selectedState
         user.university = university.isEmpty ? nil : university
+        user.chapterId = selectedChapterId
+        user.isMember = selectedChapterId != nil
         
         authManager.updateUser(user)
         presentationMode.wrappedValue.dismiss()

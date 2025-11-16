@@ -56,12 +56,29 @@ struct MembersView: View {
                                 .font(.headline)
                         }
                         
-                        if authManager.currentUser?.isMember == true {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                Text("Active Member")
-                                    .fontWeight(.semibold)
+                        if authManager.currentUser?.isMember == true, let chapter = userChapter {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                    Text("Active Member")
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                Divider()
+                                
+                                HStack {
+                                    Image(systemName: "building.2.fill")
+                                        .foregroundColor(.blue)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Member of")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(chapter.displayName)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                }
                             }
                         } else {
                             VStack(alignment: .leading, spacing: 10) {
@@ -71,7 +88,7 @@ struct MembersView: View {
                                     Text("Not yet a member")
                                 }
                                 
-                                Text("Join a chapter to become an active member!")
+                                Text("Select a chapter in your profile to become an active member!")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -132,7 +149,7 @@ struct MembersView: View {
                                     .font(.headline)
                             }
                             
-                            Text("You haven't joined a chapter yet. Find one near you!")
+                            Text("You haven't joined a chapter yet. Select one in your profile!")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             
@@ -166,6 +183,21 @@ struct MembersView: View {
                                         }
                                     }
                                 }
+                            }
+                            
+                            Button(action: {
+                                // This will be handled by the sheet presentation
+                            }) {
+                                HStack {
+                                    Image(systemName: "person.badge.plus")
+                                    Text("Join a Chapter in Profile")
+                                    Spacer()
+                                    Image(systemName: "arrow.right")
+                                }
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(Color.blue)
+                                .cornerRadius(10)
                             }
                         }
                         .padding()
