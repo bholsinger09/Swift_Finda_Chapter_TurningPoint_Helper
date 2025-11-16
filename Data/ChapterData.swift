@@ -143,6 +143,13 @@ struct ChapterData {
         Chapter(name: "Purdue TPUSA", state: "Indiana", city: "West Lafayette", university: "Purdue University", presidentName: "Nora Walker", contactEmail: "purdue@tpusa.local", phoneNumber: "765-555-1802", description: "Boilermakers for freedom", memberCount: 145, meetingLocation: "PMU", meetingSchedule: "Thursdays 6PM", dateEstablished: Date(timeIntervalSince1970: 1725148800)),
         
         // Missouri (2 chapters)
-        Chapter(name: "Mizzou TPUSA", state: "Missouri", city: "Columbia", university: "University of Missouri", presidentName: "Leo Martinez", contactEmail: "mizzou@tpusa.local", phoneNumber: "573-555-1901", description: "Tigers for conservative values", memberCount: 121, meetingLocation: "MU Student Center", meetingSchedule: "Wednesdays 7PM", dateEstablished: Date(timeIntervalSince1970: 1727740800))
+        Chapter(name: "Mizzou TPUSA", state: "Missouri", city: "Columbia", university: "University of Missouri", presidentName: "Leo Martinez", contactEmail: "mizzou@tpusa.local", phoneNumber: "573-555-1901", description: "Tigers for conservative values", memberCount: 121, meetingLocation: "MU Student Center", meetingSchedule: "Wednesdays 7PM", dateEstablished: Date(timeIntervalSince1970: 1727740800)),
+        
+        // Idaho (3 chapters)
+        Chapter(name: "Boise State TPUSA", state: "Idaho", city: "Boise", university: "Boise State University", presidentName: "Tyler Johnson", contactEmail: "boisestate@tpusa.local", phoneNumber: "208-555-2001", description: "Broncos for freedom and conservative values", memberCount: 156, meetingLocation: "Student Union Building", meetingSchedule: "Thursdays 6:30PM", dateEstablished: Date(timeIntervalSince1970: 1730419200)),
+        
+        Chapter(name: "University of Idaho TPUSA", state: "Idaho", city: "Moscow", university: "University of Idaho", presidentName: "Sarah Mitchell", contactEmail: "uidaho@tpusa.local", phoneNumber: "208-555-2002", description: "Vandals standing for liberty", memberCount: 98, meetingLocation: "Bruce Pitman Center", meetingSchedule: "Wednesdays 7PM", dateEstablished: Date(timeIntervalSince1970: 1733011200)),
+        
+        Chapter(name: "Idaho State TPUSA", state: "Idaho", city: "Pocatello", university: "Idaho State University", presidentName: "Connor Davis", contactEmail: "isu@tpusa.local", phoneNumber: "208-555-2003", description: "Bengals for America", memberCount: 87, meetingLocation: "Pond Student Union", meetingSchedule: "Tuesdays 6PM", dateEstablished: Date(timeIntervalSince1970: 1735689600))
     ]
 }
