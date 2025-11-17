@@ -116,6 +116,7 @@ struct UniversitiesView: View {
             }
             .navigationTitle("Universities")
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

@@ -238,6 +238,7 @@ struct MembersView: View {
             }
             .navigationTitle("Members")
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

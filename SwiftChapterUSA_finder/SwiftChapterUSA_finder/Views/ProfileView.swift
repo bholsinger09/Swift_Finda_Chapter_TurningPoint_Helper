@@ -14,49 +14,84 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Profile Header
-                    VStack(spacing: 15) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 100))
-                            .foregroundColor(.blue)
-                        
-                        Text(authManager.currentUser?.fullName ?? "User")
-                            .font(.title)
-                            .fontWeight(.bold)
-                        
-                        Text(authManager.currentUser?.email ?? "")
+            Group {
+                if let user = authManager.currentUser {
+                    profileContent(for: user)
+                } else {
+                    VStack(spacing: 20) {
+                        Image(systemName: "person.crop.circle.badge.exclamationmark")
+                            .font(.system(size: 80))
+                            .foregroundColor(.gray)
+                        Text("No User Profile")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("Please log out and sign in again")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(15)
-                    
-                    // Profile Information
-                    VStack(alignment: .leading, spacing: 15) {
-                        Text("Profile Information")
-                            .font(.headline)
-                        
-                        ProfileInfoRow(icon: "envelope.fill", label: "Email", value: authManager.currentUser?.email ?? "")
-                        
-                        ProfileInfoRow(icon: "map.fill", label: "State", value: authManager.currentUser?.state ?? "")
-                        
-                        if let university = authManager.currentUser?.university {
-                            ProfileInfoRow(icon: "graduationcap.fill", label: "University", value: university)
+                        Button("Logout") {
+                            authManager.logout()
                         }
-                        
-                        ProfileInfoRow(icon: "calendar", label: "Member Since", value: authManager.currentUser?.dateJoined.formatted(date: .long, time: .omitted) ?? "")
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .padding()
+                }
+            }
+            .navigationTitle("Profile")
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .sheet(isPresented: $showingEditProfile) {
+            EditProfileView()
+        }
+    }
+    
+    @ViewBuilder
+    private func profileContent(for user: User) -> some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // Profile Header
+                VStack(spacing: 15) {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 100))
+                        .foregroundColor(.blue)
+                    
+                    Text(user.fullName)
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Text(user.email)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color(.systemGray6))
+                .cornerRadius(15)
+                    
+                // Profile Information
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("Profile Information")
+                        .font(.headline)
+                    
+                    ProfileInfoRow(icon: "envelope.fill", label: "Email", value: user.email)
+                    
+                    ProfileInfoRow(icon: "map.fill", label: "State", value: user.state)
+                    
+                    if let university = user.university {
+                        ProfileInfoRow(icon: "graduationcap.fill", label: "University", value: university)
+                    }
+                    
+                    ProfileInfoRow(icon: "calendar", label: "Member Since", value: user.dateJoined.formatted(date: .long, time: .omitted))
                     }
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(15)
                     
-                    // Chapter Membership
-                    if let chapterId = authManager.currentUser?.chapterId,
-                       let chapter = chapterManager.chapters.first(where: { $0.id == chapterId }) {
+                // Chapter Membership
+                if let chapterId = user.chapterId,
+                   let chapter = chapterManager.chapters.first(where: { $0.id == chapterId }) {
                         VStack(alignment: .leading, spacing: 15) {
                             HStack {
                                 Image(systemName: "building.2.fill")
@@ -159,13 +194,15 @@ struct ProfileView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Profile")
-            .sheet(isPresented: $showingEditProfile) {
-                EditProfileView()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Edit") {
+                        showingEditProfile = true
+                    }
+                }
             }
         }
     }
-}
 
 struct ProfileInfoRow: View {
     let icon: String
@@ -312,6 +349,7 @@ struct EditProfileView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     private func saveProfile() {

@@ -109,6 +109,7 @@ struct CreateChapterView: View {
                 Text(alertMessage)
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     private var isFormValid: Bool {

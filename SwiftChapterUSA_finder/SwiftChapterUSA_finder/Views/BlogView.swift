@@ -91,6 +91,7 @@ struct BlogView: View {
                 CreatePostView()
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

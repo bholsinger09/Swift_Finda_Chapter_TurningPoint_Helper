@@ -113,6 +113,7 @@ struct ChaptersView: View {
                 CreateChapterView()
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
